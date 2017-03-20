@@ -18,7 +18,7 @@
     </Target>
 
   <Target Name="CreateVSIX" Condition="'$(NuGetVSVersion)' == '15' Or '$(NuGetVSVersion)' == '15Ins'" >
-    <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(VSIXWrapperDropPath)"/>
+    <Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(VSIXWrapperDropPath)%(RecursiveDir)"/>
     <Exec Command="$(NuGetToolsPath)NuGet.exe restore $(VSIXWrapperSln)" WorkingDirectory="$(VSIXWrapperSlnPath)"/>
     <Exec Command="MSBuild /t:build /p:Configuration=$(Configuration) $(VSIXWrapperSln)" WorkingDirectory="$(VSIXWrapperSlnPath)"/>
     <Copy SourceFiles="$(VSIXWrapperArtifactsFolder)NuGet.Tools.vsix" DestinationFiles="$(NuGetVSIXOutputPath)\NuGet.Tools.vsix" />
