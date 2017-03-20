@@ -292,7 +292,7 @@
     ============================================================
   -->
   <Target Name="RunTestsOnProjects">
-    <Message Text="Running $(CoreUnitTests)" Importance="high" />
+    <Message Text="Running $(TestResultsFileName)" Importance="high" />
 
     <ItemGroup>
       <TestProjectToSearch Include="$(TestProjectPaths)" />
@@ -302,7 +302,8 @@
             Projects="@(TestProjectToSearch)"
             Targets="GetTestAssemblies"
             Properties="$(CommonMSBuildProperties);
-                         VisualStudioVersion=$(VisualStudioVersion);">
+                         VisualStudioVersion=$(VisualStudioVersion);"
+            Condition=" '$(TestProjectPaths)' != '' ">
       <Output TaskParameter="TargetOutputs"
               ItemName="TestAssemblyPath" />
     </MSBuild>
