@@ -103,52 +103,73 @@ if (-not $SkipVS15 -and -not $VS15Installed) {
 $BuildErrors = @()
 
 Invoke-BuildStep 'Cleaning artifacts' {
-        Clear-Artifacts
-        Clear-Nupkgs
-    } `
-    -skip:($Fast -or $SkipXProj) `
-    -ev +BuildErrors
+    Clear-Artifacts
+    Clear-Nupkgs
+} `
+-skip:($Fast -or $SkipXProj) `
+-ev +BuildErrors
 
 Invoke-BuildStep 'Set delay signing options' {
-        Set-DelaySigning $MSPFXPath $NuGetPFXPath
-    } `
-    -ev +BuildErrors
+    Set-DelaySigning $MSPFXPath $NuGetPFXPath
+} `
+-ev +BuildErrors
 
-# Restore for VS 15.0	
-& $MSBuildExe build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+    
+Invoke-BuildStep 'Running Restore for VS 15.0' {
 
-if (-not $?)
-{
-    Write-Error "Restore failed!"
-    exit 1
-}
+    # Restore for VS 15.0	
+    & $MSBuildExe build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
-# Build, Pack, Core unit tests, and Unit tests for VS 15.0	
-& $MSBuildExe build\build.proj /t:RunVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+    if (-not $?)
+    {
+        Write-Error "Restore failed!"
+        exit 1
+    }
+} `
+-ev +BuildErrors
 
-if (-not $?)
-{
-    Write-Error "VS 15 failed!"
-    exit 1
-}
 
-# Restore for VS 14.0
-& $MSBuildExe build\build.proj /t:RestoreVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
-if (-not $?)
-{
-    Write-Error "Restore failed!"
-    exit 1
-}
+Invoke-BuildStep 'Running Build, Pack, Core unit tests, and Unit tests for VS 15.0' {
 
-# Build and Unit tests for VS 14.0
-& $MSBuildExe build\build.proj /t:RunVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+    # Build, Pack, Core unit tests, and Unit tests for VS 15.0
+    & $MSBuildExe build\build.proj /t:RunVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
-if (-not $?)
-{
-    Write-Error "VS 14 failed!"
-    exit 1
-}
+    if (-not $?)
+    {
+        Write-Error "VS 15 build and unit tests failed!"
+        exit 1
+    }
+} `
+-ev +BuildErrors
+
+
+Invoke-BuildStep 'Running Restore for VS 14.0' {
+
+    # Restore for VS 14.0
+    & $MSBuildExe build\build.proj /t:RestoreVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+
+    if (-not $?)
+    {
+        Write-Error "Restore failed!"
+        exit 1
+    }
+} `
+-ev +BuildErrors
+
+
+Invoke-BuildStep 'Running Build and Unit tests for VS 14.0' {
+
+    # Build and Unit tests for VS 14.0
+    & $MSBuildExe build\build.proj /t:RunVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+
+    if (-not $?)
+    {
+        Write-Error "VS 14 build and unit tests failed!"
+        exit 1
+    }
+} `
+-ev +BuildErrors
 
 # Building the VS15 Tooling solution
 # Invoke-BuildStep 'Building NuGet.sln - VS15 Toolset' {
