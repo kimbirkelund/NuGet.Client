@@ -171,6 +171,27 @@ Invoke-BuildStep 'Running Build and Unit tests for VS 14.0' {
 } `
 -ev +BuildErrors
 
+
+Invoke-BuildStep 'Publishing the VS14 EndToEnd test package' {
+        param($Configuration)
+        $EndToEndScript = Join-Path $PSScriptRoot scripts\cibuild\CreateEndToEndTestPackage.ps1 -Resolve
+        $OutDir = Join-Path $Artifacts VS14
+        & $EndToEndScript -c $Configuration -tv 14 -out $OutDir
+    } `
+    -args $Configuration `
+    -skip:($Fast -or $SkipVS14) `
+    -ev +BuildErrors
+
+Invoke-BuildStep 'Publishing the VS15 EndToEnd test package' {
+        param($Configuration)
+        $EndToEndScript = Join-Path $PSScriptRoot scripts\cibuild\CreateEndToEndTestPackage.ps1 -Resolve
+        $OutDir = Join-Path $Artifacts VS15
+        & $EndToEndScript -c $Configuration -tv 15 -out $OutDir
+    } `
+    -args $Configuration `
+    -skip:($Fast -or $SkipVS15) `
+    -ev +BuildErrors
+
 # Building the VS15 Tooling solution
 # Invoke-BuildStep 'Building NuGet.sln - VS15 Toolset' {
 #        Build-Solution `
