@@ -192,6 +192,18 @@ Invoke-BuildStep $VS14Message {
 -skip:$SkipVS14 `
 -ev +BuildErrors
 
+# building the vs15 nuget.tools.vsix for vs insertion
+invoke-buildstep 'building nuget.tools.vsix for vs insertion - vs15 toolset' {
+        build-clientsprojecthelper `
+        -solutionorproject (join-path $nugetclientroot .\src\nuget.clients\nuget.tools\nuget.tools.csproj -resolve) `
+        -configuration $configuration `
+        -releaselabel $releaselabel `
+        -buildnumber $buildnumber `
+        -parameters @{'isinsertable'='true'} `
+        -toolsetversion 15 `
+    } `
+    -skip:($skipvs15 -or -not $ci) `
+    -ev +builderrors
 
 Invoke-BuildStep 'Publishing the VS14 EndToEnd test package' {
         param($Configuration)
@@ -212,30 +224,6 @@ Invoke-BuildStep 'Publishing the VS15 EndToEnd test package' {
     -args $Configuration `
     -skip:($Fast -or $SkipVS15) `
     -ev +BuildErrors
-
-# Building the VS15 Tooling solution
-# Invoke-BuildStep 'Building NuGet.sln - VS15 Toolset' {
-#        Build-Solution `
-#             -Configuration $Configuration `
-#             -ReleaseLabel $ReleaseLabel `
-#             -BuildNumber $BuildNumber `
-#             -ToolsetVersion 15 `
-#     } `
-#     -skip:$SkipVS15 `
-#     -ev +BuildErrors
-
-## Building the VS15 NuGet.Tools.vsix for VS insertion
-# Invoke-BuildStep 'Building NuGet.Tools.vsix for VS Insertion - VS15 Toolset' {
-        # Build-ClientsProjectHelper `
-        # -SolutionOrProject (Join-Path $NuGetClientRoot .\src\NuGet.Clients\NuGet.Tools\NuGet.Tools.csproj -Resolve) `
-        # -Configuration $Configuration `
-        # -ReleaseLabel $ReleaseLabel `
-        # -BuildNumber $BuildNumber `
-        # -Parameters @{'IsInsertable'='true'} `
-        # -ToolsetVersion 15 `
-    # } `
-    # -skip:($SkipVS15 -or -not $CI) `
-    # -ev +BuildErrors
 
 # Invoke-BuildStep 'Publishing NuGet.Clients packages - VS15 Toolset' {
         # Publish-ClientsPackages $Configuration $ReleaseLabel $BuildNumber -ToolsetVersion 15 -KeyFile $MSPFXPath -CI:$CI
