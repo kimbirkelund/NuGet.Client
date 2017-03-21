@@ -31,6 +31,7 @@
                                    $(RepositoryRootDirectory)test\NuGet.Core.Tests\*VisualStudio*\*.csproj;
                                    $(RepositoryRootDirectory)test\NuGet.Core.Tests\*.Utility\*.csproj;
                                    $(RepositoryRootDirectory)test\NuGet.Core.Tests\NuGet.Indexing.Test\*.csproj" />
+    <CoreFuncTestProjects Include="$(RepositoryRootDirectory)test\NuGet.Core.FuncTests\*\*.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsXPlat)' != 'true' ">
@@ -169,7 +170,7 @@
     Build for VS14
     ============================================================
   -->
-  <Target Name="BuildVS14">
+  <Target Name="BuildVS14" Condition=" '$(IsXPlat)' != 'true' ">
     <Message Text="Building for VS14" Importance="high" />
 
     <MSBuild Projects="$(SolutionFile)"
@@ -183,7 +184,7 @@
     Build for VS15
     ============================================================
   -->
-  <Target Name="BuildVS15">
+  <Target Name="BuildVS15" Condition=" '$(IsXPlat)' != 'true' ">
     <Message Text="Building for VS15" Importance="high" />
 
     <MSBuild Projects="$(SolutionFile)"

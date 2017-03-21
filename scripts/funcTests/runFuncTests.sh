@@ -13,7 +13,7 @@ RESULTCODE=0
 # move up to the repo root
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DIR=$SCRIPTDIR/../../
-pushd DIR
+pushd $DIR
 
 # Download the CLI install script to cli
 echo "Installing dotnet CLI"
@@ -69,6 +69,11 @@ $DOTNET msbuild build/build.proj /t:CoreFuncTests /p:VisualStudioVersion=15.0 /p
 if [ $? -ne 0 ]; then
 	echo "CoreFuncTests failed!!"
 	exit 1
+fi
+
+if [ -z "$CI" ]; then
+	popd
+	exit $RESULTCODE
 fi
 
 #run mono test
