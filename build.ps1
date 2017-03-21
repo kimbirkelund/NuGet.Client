@@ -63,6 +63,8 @@ param (
     [switch]$SkipVS14,
     [Alias('s15')]
     [switch]$SkipVS15,
+    [Alias('su')]
+    [switch]$SkipUnitTest,
     [Alias('f')]
     [switch]$Fast,
     [switch]$CI,
@@ -106,7 +108,7 @@ Invoke-BuildStep 'Cleaning artifacts' {
     Clear-Artifacts
     Clear-Nupkgs
 } `
--skip:($Fast -or $SkipXProj) `
+-skip:$Fast `
 -ev +BuildErrors
 
 Invoke-BuildStep 'Set delay signing options' {
@@ -114,10 +116,23 @@ Invoke-BuildStep 'Set delay signing options' {
 } `
 -ev +BuildErrors
 
-    
+if($SkipUnitTest){
+    $VS14Target = "BuildVS14";
+    $VS14Message = "Running Build for VS 14.0";
+    $VS15Target = "BuildVS15;Pack";
+    $VS15Message = "Running Build for VS 15.0"
+}
+else {
+    $VS14Target = "RunVS14";
+    $VS14Message = "Running Build and Unit tests for VS 14.0";
+    $VS15Target = "RunVS15";
+    $VS15Message = "Running Build, Pack, Core unit tests, and Unit tests for VS 15.0";
+}
+
 Invoke-BuildStep 'Running Restore for VS 15.0' {
 
-    # Restore for VS 15.0	
+    # Restore for VS 15.0
+    Trace-Log ". `"$MSBuildExe`" build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1"
     & $MSBuildExe build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
     if (-not $?)
@@ -126,14 +141,15 @@ Invoke-BuildStep 'Running Restore for VS 15.0' {
         exit 1
     }
 } `
+-skip:$SkipVS15 `
 -ev +BuildErrors
 
 
+Invoke-BuildStep $VS15Message {
 
-Invoke-BuildStep 'Running Build, Pack, Core unit tests, and Unit tests for VS 15.0' {
-
-    # Build, Pack, Core unit tests, and Unit tests for VS 15.0
-    & $MSBuildExe build\build.proj /t:RunVS15 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+    # Build and (If not $SkipUnitTest) Pack, Core unit tests, and Unit tests for VS 15.0
+    Trace-Log ". `"$MSBuildExe`" build\build.proj /t:$VS15Target /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1"
+    & $MSBuildExe build\build.proj /t:$VS15Target /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
     if (-not $?)
     {
@@ -141,12 +157,14 @@ Invoke-BuildStep 'Running Build, Pack, Core unit tests, and Unit tests for VS 15
         exit 1
     }
 } `
+-skip:$SkipVS15 `
 -ev +BuildErrors
 
 
 Invoke-BuildStep 'Running Restore for VS 14.0' {
 
     # Restore for VS 14.0
+    Trace-Log ". `"$MSBuildExe`" build\build.proj /t:RestoreVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1"
     & $MSBuildExe build\build.proj /t:RestoreVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
     if (-not $?)
@@ -155,13 +173,15 @@ Invoke-BuildStep 'Running Restore for VS 14.0' {
         exit 1
     }
 } `
+-skip:$SkipVS14 `
 -ev +BuildErrors
 
 
-Invoke-BuildStep 'Running Build and Unit tests for VS 14.0' {
+Invoke-BuildStep $VS14Message {
 
-    # Build and Unit tests for VS 14.0
-    & $MSBuildExe build\build.proj /t:RunVS14 /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
+    # Build and (If not $SkipUnitTest) Run Unit tests for VS 14.0
+    Trace-Log ". `"$MSBuildExe`" build\build.proj /t:$VS14Target /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1"
+    & $MSBuildExe build\build.proj /t:$VS14Target /p:Configuration=$Configuration /p:ReleaseLabel=$ReleaseLabel /p:BuildNumber=$BuildNumber /v:m /m:1
 
     if (-not $?)
     {
@@ -169,6 +189,7 @@ Invoke-BuildStep 'Running Build and Unit tests for VS 14.0' {
         exit 1
     }
 } `
+-skip:$SkipVS14 `
 -ev +BuildErrors
 
 

@@ -5,7 +5,7 @@
   <!-- Configuration/global properties -->
   <PropertyGroup>
     <CommonMSBuildProperties>
-      Configuration=Release;
+      Configuration=$(Configuration);
       ReleaseLabel=$(ReleaseLabel);
       BuildNumber=$(BuildNumber);
     </CommonMSBuildProperties>
