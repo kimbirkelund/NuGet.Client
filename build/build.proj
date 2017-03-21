@@ -41,6 +41,7 @@
 
   <ItemGroup Condition=" '$(IsXPlat)' == 'true' ">
     <SolutionProjects Include="@(CoreUnitTestProjects)" />
+    <SolutionProjects Include="@(CoreFuncTestProjects)" />
   </ItemGroup>
 
   <!--
