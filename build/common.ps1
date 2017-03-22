@@ -1012,8 +1012,10 @@ Function Publish-NuGetExePackage {
     $exeProjectDir = [io.path]::combine($NuGetClientRoot, "src", "NuGet.Clients", "NuGet.CommandLine")
     $exeProject = Join-Path $exeProjectDir "NuGet.CommandLine.csproj"
     $exeNuspec = Join-Path $exeProjectDir "NuGet.CommandLine.nuspec"
-    $exeInputDir = [io.path]::combine($Artifacts, "NuGet.CommandLine", "${ToolsetVersion}.0", "bin", $Configuration, "net45")
-    $exeOutputDir = Join-Path $Artifacts "VS${ToolsetVersion}"
+    $exeInputDir = [io.path]::combine($Artifacts, "NuGet.CommandLine", "15.0", "bin", $Configuration, "net45")
+    $exeOutputDir = Join-Path $Artifacts "VS15"
+    $exeInputDirRTM = [io.path]::combine($Artifacts, "NuGet.CommandLine", "15.0-RTM", "bin", $Configuration, "net45")
+    $exeOutputDirRTM = Join-Path $Artifacts "VS15-RTM"
 
     Invoke-ILMerge `
         -InputDir $exeInputDir `
@@ -1026,6 +1028,24 @@ Function Publish-NuGetExePackage {
         -OutputDir $Nupkgs `
         -Version $prereleaseNupkgVersion `
         -Configuration $Configuration
+
+    # Build the RTM version of the package
+    if (Test-Path $exeInputDirRTM)
+    {
+        New-Item -ItemType Directory -Force -Path $exeOutputDirRTM
+
+        Invoke-ILMerge `
+            -InputDir $exeInputDirRTM `
+            -OutputDir $exeOutputDirRTM `
+            -KeyFile $KeyFile
+
+        New-NuGetPackage `
+            -NuspecPath $exeNuspec `
+            -BasePath $exeOutputDirRTM `
+            -OutputDir $ReleaseNupkgs `
+            -Version $PackageReleaseVersion `
+            -Configuration $Configuration
+    }
 }
 
 Function Publish-ClientsPackages {

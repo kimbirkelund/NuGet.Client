@@ -18,7 +18,8 @@
     <SharedDirectory>$(RepositoryRootDirectory)Shared</SharedDirectory>
     <NuGetCoreSrcDirectory>$(RepositoryRootDirectory)src\NuGet.Core\</NuGetCoreSrcDirectory>
     <NuGetClientsSrcDirectory>$(RepositoryRootDirectory)src\NuGet.Clients\</NuGetClientsSrcDirectory>
-    <NupkgOutputDirectory>$(ArtifactsDirectory)nupkgs\</NupkgOutputDirectory>
+    <NupkgOutputDirectory Condition=" '$(BuildRTM)' != 'true' ">$(ArtifactsDirectory)nupkgs\</NupkgOutputDirectory>
+    <NupkgOutputDirectory Condition=" '$(BuildRTM)' == 'true' ">$(ArtifactsDirectory)ReleaseNupkgs\</NupkgOutputDirectory>
     <SolutionPackagesFolder>$(RepositoryRootDirectory)packages\</SolutionPackagesFolder>
     <XunitConoleExePath>$(SolutionPackagesFolder)xunit.runner.console.2.2.0\tools\xunit.console.x86.exe</XunitConoleExePath>
     <EnlistmentRoot>$(RepositoryRootDirectory)</EnlistmentRoot>
@@ -112,14 +113,20 @@
 
   <PropertyGroup Condition=" '$(Version)' == '' ">
     <Version>$(SemanticVersion)$(PreReleaseInformationVersion)</Version>
+    <Version Condition=" '$(BuildRTM)' == 'true' ">$(SemanticVersion)</Version>
   </PropertyGroup>
 
   <!-- Set the output location for all non-test projects -->
   <!-- Test projects currently fail when the output dir is moved -->
   <PropertyGroup Condition=" '$(TestProject)' != 'true' ">
-    <BaseIntermediateOutputPath>$(ArtifactsDirectory)$(MSBuildProjectName)\$(VisualStudioVersion)\obj\</BaseIntermediateOutputPath>
+    <!-- Create different folders for 14.0, 15.0, 15.0-RTM -->
+    <BuildVariationFolder>$(VisualStudioVersion)</BuildVariationFolder>
+    <BuildVariationFolder Condition=" '$(BuildRTM)' == 'true' ">$(BuildVariationFolder)-RTM</BuildVariationFolder>
+    
+    <!-- output paths -->
+    <BaseIntermediateOutputPath>$(ArtifactsDirectory)$(MSBuildProjectName)\$(BuildVariationFolder)\obj\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
-    <BaseOutputPath>$(ArtifactsDirectory)$(MSBuildProjectName)\$(VisualStudioVersion)\bin\</BaseOutputPath>
+    <BaseOutputPath>$(ArtifactsDirectory)$(MSBuildProjectName)\$(BuildVariationFolder)\bin\</BaseOutputPath>
     <OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
     <AppxPackageDir>$(OutputPath)</AppxPackageDir>
   </PropertyGroup>

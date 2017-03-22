@@ -43,7 +43,7 @@
   <Import Project="$(BuildCommonDirectory)common.targets" />
 
   <!-- Custom pack, called by build.proj -->
-  <Target Name="Pack">
+  <Target Name="Pack" DependsOnTargets="Build">
     <ItemGroup>
       <Nuspec Include="*.nuspec" />
       <PackageInclude Include="install.ps1" />

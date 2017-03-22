@@ -44,6 +44,9 @@
     <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
     <ExtensionInstallationFolder>Microsoft\NuGet</ExtensionInstallationFolder>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(BuildRTM)' == 'true' ">
+    <VsixOutputDirName>$(VsixOutputDirName)-RTM</VsixOutputDirName>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' And '$(BuildingInsideVisualStudio)' == 'True'">
     <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>

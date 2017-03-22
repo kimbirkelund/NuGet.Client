@@ -8,6 +8,7 @@
       Configuration=$(Configuration);
       ReleaseLabel=$(ReleaseLabel);
       BuildNumber=$(BuildNumber);
+      BuildRTM=$(BuildRTM);
     </CommonMSBuildProperties>
   </PropertyGroup>
 
@@ -222,7 +223,7 @@
     Pack for VS15
     ============================================================
   -->
-  <Target Name="Pack" DependsOnTargets="BuildVS15">
+  <Target Name="Pack">
     <Message Text="Packing for VS15" Importance="high" />
 
     <MSBuild BuildInParallel="false"

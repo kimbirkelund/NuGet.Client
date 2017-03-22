@@ -225,22 +225,45 @@ Invoke-BuildStep 'Publishing the VS15 EndToEnd test package' {
     -skip:($Fast -or $SkipVS15) `
     -ev +BuildErrors
 
-Invoke-BuildStep 'Publishing NuGet.Clients packages - VS15 Toolset' {
+if ($CI)
+{
+    Invoke-BuildStep 'Running Restore for VS 15.0 RTM' {
+
+        # Restore for VS 15.0
+        Trace-Log ". `"$MSBuildExe`" build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:BuildRTM=true /v:m /m:1"
+        & $MSBuildExe build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:BuildRTM=true /v:m /m:1
+
+        if (-not $?)
+        {
+            Write-Error "Restore failed!"
+            exit 1
+        }
+    } `
+    -skip:$SkipVS15 `
+    -ev +BuildErrors
+
+
+    Invoke-BuildStep 'Packing VS15 RTM' {
+
+        # Build and (If not $SkipUnitTest) Pack, Core unit tests, and Unit tests for VS 15.0
+        Trace-Log ". `"$MSBuildExe`" build\build.proj /t:RestoreVS15 /p:Configuration=$Configuration /p:BuildRTM=true /v:m /m:1"
+        & $MSBuildExe build\build.proj /t:BuildVS15`;Pack /p:Configuration=$Configuration /p:BuildRTM=true /v:m /m:1
+
+        if (-not $?)
+        {
+            Write-Error "VS15 RTM build failed!"
+            exit 1
+        }
+    } `
+    -skip:$SkipVS15 `
+    -ev +BuildErrors
+}
+
+Invoke-BuildStep 'Publishing nuget.exe packages' {
         Publish-NuGetExePackage $Configuration $ReleaseLabel $BuildNumber -ToolsetVersion 15 -KeyFile $MSPFXPath -CI:$CI
     } `
     -skip:($Fast -or $SkipVS15) `
     -ev +BuildErrors
-
-# # Building the VS14 Tooling solution
-# Invoke-BuildStep 'Building NuGet.sln - VS14 Toolset' {
-        # Build-Solution `
-            # -Configuration $Configuration `
-            # -ReleaseLabel $ReleaseLabel `
-            # -BuildNumber $BuildNumber `
-            # -ToolsetVersion 14 `
-    # } `
-    # -skip:$SkipVS14 `
-    # -ev +BuildErrors
 
 ## Calculating Build time
 $endTime = [DateTime]::UtcNow
