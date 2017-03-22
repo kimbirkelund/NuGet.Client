@@ -225,11 +225,11 @@ Invoke-BuildStep 'Publishing the VS15 EndToEnd test package' {
     -skip:($Fast -or $SkipVS15) `
     -ev +BuildErrors
 
-# Invoke-BuildStep 'Publishing NuGet.Clients packages - VS15 Toolset' {
-        # Publish-ClientsPackages $Configuration $ReleaseLabel $BuildNumber -ToolsetVersion 15 -KeyFile $MSPFXPath -CI:$CI
-    # } `
-    # -skip:($Fast -or $SkipVS15) `
-    # -ev +BuildErrors
+Invoke-BuildStep 'Publishing NuGet.Clients packages - VS15 Toolset' {
+        Publish-NuGetExePackage $Configuration $ReleaseLabel $BuildNumber -ToolsetVersion 15 -KeyFile $MSPFXPath -CI:$CI
+    } `
+    -skip:($Fast -or $SkipVS15) `
+    -ev +BuildErrors
 
 # # Building the VS14 Tooling solution
 # Invoke-BuildStep 'Building NuGet.sln - VS14 Toolset' {

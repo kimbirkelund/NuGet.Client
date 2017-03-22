@@ -990,6 +990,44 @@ Function Test-ProjectsHelper {
     $TestProjects | Execute-Tests -Configuration $Configuration
 }
 
+Function Publish-NuGetExePackage {
+    [CmdletBinding()]
+    param(
+        [string]$Configuration = $DefaultConfiguration,
+        [string]$ReleaseLabel = $DefaultReleaseLabel,
+        [int]$BuildNumber = (Get-BuildNumber),
+        [ValidateSet(15)]
+        [int]$ToolsetVersion = $DefaultMSBuildVersion,
+        [string]$KeyFile,
+        [switch]$CI
+    )
+
+    $prereleaseNupkgVersion = "$PackageReleaseVersion-$ReleaseLabel-$BuildNumber"
+    if ($ReleaseLabel -Ne 'rtm') {
+        $releaseNupkgVersion = "$PackageReleaseVersion-$ReleaseLabel"
+    } else {
+        $releaseNupkgVersion = "$PackageReleaseVersion"
+    }
+
+    $exeProjectDir = [io.path]::combine($NuGetClientRoot, "src", "NuGet.Clients", "NuGet.CommandLine")
+    $exeProject = Join-Path $exeProjectDir "NuGet.CommandLine.csproj"
+    $exeNuspec = Join-Path $exeProjectDir "NuGet.CommandLine.nuspec"
+    $exeInputDir = [io.path]::combine($Artifacts, "NuGet.CommandLine", "${ToolsetVersion}.0", "bin", $Configuration, "net45")
+    $exeOutputDir = Join-Path $Artifacts "VS${ToolsetVersion}"
+
+    Invoke-ILMerge `
+        -InputDir $exeInputDir `
+        -OutputDir $exeOutputDir `
+        -KeyFile $KeyFile
+
+    New-NuGetPackage `
+        -NuspecPath $exeNuspec `
+        -BasePath $exeOutputDir `
+        -OutputDir $Nupkgs `
+        -Version $prereleaseNupkgVersion `
+        -Configuration $Configuration
+}
+
 Function Publish-ClientsPackages {
     [CmdletBinding()]
     param(
