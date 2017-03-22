@@ -1016,6 +1016,8 @@ Function Publish-NuGetExePackage {
     $exeOutputDir = Join-Path $Artifacts "VS15"
     $exeInputDirRTM = [io.path]::combine($Artifacts, "NuGet.CommandLine", "15.0-RTM", "bin", $Configuration, "net45")
     $exeOutputDirRTM = Join-Path $Artifacts "VS15-RTM"
+    $exeOutputExePath = Join-Path $exeOutputDir "NuGet.exe"
+    $exeArtifactsOutputExePath = Join-Path $Artifacts "NuGet.exe"
 
     Invoke-ILMerge `
         -InputDir $exeInputDir `
@@ -1028,6 +1030,9 @@ Function Publish-NuGetExePackage {
         -OutputDir $Nupkgs `
         -Version $prereleaseNupkgVersion `
         -Configuration $Configuration
+
+    # TODO: Is this needed or should this be done on the CI?
+    Copy-Item $exeOutputExePath $exeArtifactsOutputExePath
 
     # Build the RTM version of the package
     if (Test-Path $exeInputDirRTM)
