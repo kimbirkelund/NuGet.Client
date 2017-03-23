@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD1946CE-5544-4F28-A04A-9C3D51113E1A}"
 EndProject
@@ -189,6 +189,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Credentials.Test", "test\NuGet.Clients.Tests\NuGet.Credentials.Test\NuGet.Credentials.Test.csproj", "{3DB4EDE3-B57B-498C-9EA9-A8BF8D9D4B2B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EndToEnd", "EndToEnd", "{A8F45E94-4CFD-478C-9FE2-8E6DEE7E0770}"
+	ProjectSection(SolutionItems) = preProject
+		test\EndToEnd\assert.ps1 = test\EndToEnd\assert.ps1
+		test\EndToEnd\nuget.assert.ps1 = test\EndToEnd\nuget.assert.ps1
+		test\EndToEnd\NuGet.Tests.psm1 = test\EndToEnd\NuGet.Tests.psm1
+		test\EndToEnd\utility.ps1 = test\EndToEnd\utility.ps1
+		test\EndToEnd\vs.ps1 = test\EndToEnd\vs.ps1
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.PackageManagement.UI.Test", "test\NuGet.Clients.Tests\NuGet.PackageManagement.UI.Test\NuGet.PackageManagement.UI.Test.csproj", "{6157BF46-D371-4126-A7F1-ED6E23F77ACD}"
 EndProject
@@ -207,6 +214,29 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestableVSCredentialProvider", "test\TestExtensions\TestableVSCredentialProvider\TestableVSCredentialProvider.csproj", "{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateTestPackages", "test\TestExtensions\GenerateTestPackages\GenerateTestPackages.csproj", "{CC657FF4-F66E-4A28-9165-AF112A93EE89}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{96255044-3776-439B-8496-C460DB9C4F97}"
+	ProjectSection(SolutionItems) = preProject
+		test\EndToEnd\tests\A-TopDownloadedPackages.ps1 = test\EndToEnd\tests\A-TopDownloadedPackages.ps1
+		test\EndToEnd\tests\BuildIntegratedTest.ps1 = test\EndToEnd\tests\BuildIntegratedTest.ps1
+		test\EndToEnd\tests\FindPackageTest.ps1 = test\EndToEnd\tests\FindPackageTest.ps1
+		test\EndToEnd\tests\GetPackageTest.ps1 = test\EndToEnd\tests\GetPackageTest.ps1
+		test\EndToEnd\tests\GetProjectTest.ps1 = test\EndToEnd\tests\GetProjectTest.ps1
+		test\EndToEnd\tests\install.ps1 = test\EndToEnd\tests\install.ps1
+		test\EndToEnd\tests\NetCoreProjectTests.ps1 = test\EndToEnd\tests\NetCoreProjectTests.ps1
+		test\EndToEnd\tests\OpenPackagePageTest.ps1 = test\EndToEnd\tests\OpenPackagePageTest.ps1
+		test\EndToEnd\tests\PackageRestoreTest.ps1 = test\EndToEnd\tests\PackageRestoreTest.ps1
+		test\EndToEnd\tests\PackTest.ps1 = test\EndToEnd\tests\PackTest.ps1
+		test\EndToEnd\tests\ProjectKTest.ps1 = test\EndToEnd\tests\ProjectKTest.ps1
+		test\EndToEnd\tests\ProjectRetargeting.ps1 = test\EndToEnd\tests\ProjectRetargeting.ps1
+		test\EndToEnd\tests\ServicesTest.ps1 = test\EndToEnd\tests\ServicesTest.ps1
+		test\EndToEnd\tests\Settings.ps1 = test\EndToEnd\tests\Settings.ps1
+		test\EndToEnd\tests\Silverlight.ps1 = test\EndToEnd\tests\Silverlight.ps1
+		test\EndToEnd\tests\sync.ps1 = test\EndToEnd\tests\sync.ps1
+		test\EndToEnd\tests\TabExpansionTest.ps1 = test\EndToEnd\tests\TabExpansionTest.ps1
+		test\EndToEnd\tests\uninstall.ps1 = test\EndToEnd\tests\uninstall.ps1
+		test\EndToEnd\tests\update.ps1 = test\EndToEnd\tests\update.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -795,5 +825,6 @@ Global
 		{90AEABA2-0FB5-4D6C-A505-FA7F9ED38076} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{7D0DDCB8-E362-4283-8AC8-3FF1E9B0263E} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{CC657FF4-F66E-4A28-9165-AF112A93EE89} = {23CEFC88-9365-4464-A517-700224ECA033}
+		{96255044-3776-439B-8496-C460DB9C4F97} = {A8F45E94-4CFD-478C-9FE2-8E6DEE7E0770}
 	EndGlobalSection
 EndGlobal
