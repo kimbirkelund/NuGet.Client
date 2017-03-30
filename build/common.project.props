@@ -176,6 +176,6 @@
 
   <!-- Add symbols to the dll for test dlls -->
   <PropertyGroup Condition=" '$(TestProject)' == 'true' ">
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 </Project>
